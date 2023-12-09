@@ -8,5 +8,6 @@ const app = new App(
     dbUri
 );
 
-app.listen();
+app.start();
 app.connectToDatabase();
+app.configRoutes();

@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 interface IChatMessage extends Document {
     userId: string,
@@ -17,3 +17,5 @@ const chatMessageSchema = new Schema<IChatMessage>({
     createdAt: { type: Date, default: new Date() },
     updateAt: { type: Date, default: new Date() },
 })
+
+export default mongoose.model<IChatMessage>('chat-inbox', chatMessageSchema);
