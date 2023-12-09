@@ -1,10 +1,10 @@
 import mongoose, { ConnectOptions } from "mongoose"
 
 class Database {
-    public mongoose: mongoose.Mongoose | undefined;
+    protected mongoose: mongoose.Mongoose | undefined;
     private dbUri: string;
 
-    public constructor(dbUri: string,) {
+    constructor(dbUri: string,) {
         this.dbUri = dbUri;
     }
 
