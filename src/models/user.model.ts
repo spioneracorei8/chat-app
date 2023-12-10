@@ -1,7 +1,6 @@
 import mongoose, { ObjectId, Schema, Types } from "mongoose";
 
 interface IUser extends Document {
-    _id: Schema.Types.ObjectId,
     name: string,
     username: string,
     email: string,
@@ -11,8 +10,13 @@ interface IUser extends Document {
     updatedAt: Date,
 }
 
+interface IRegisterResponse {
+    message: string,
+    statusCode: number,
+    error?: unknown
+}
+
 const userSchema = new Schema<IUser>({
-    _id: Schema.Types.ObjectId,
     name: { type: String, default: String, required: true },
     username: { type: String, default: String, required: true },
     email: { type: String, default: String, required: true, unique: true },
@@ -22,6 +26,6 @@ const userSchema = new Schema<IUser>({
     updatedAt: { type: Date, default: new Date() },
 })
 
-const UserModel = mongoose.model<IUser>('user', userSchema);
+const UserModel = mongoose.model<IUser>('userModel', userSchema, 'user');
 
-export { UserModel, IUser }
+export { UserModel, IUser, IRegisterResponse }
