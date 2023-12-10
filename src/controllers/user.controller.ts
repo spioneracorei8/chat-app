@@ -1,6 +1,6 @@
 import userSevice from "../services/user.service"
 import { Request, Response } from "express";
-import { IUser, IRegisterResponse } from "../models/user.model";
+import { IUser, IUserResponse } from "../models/user.model";
 class UserController {
 
     constructor() {
@@ -8,8 +8,8 @@ class UserController {
 
     async getUsers(req: Request, res: Response): Promise<Response> {
         try {
-            const usersData = await userSevice.getUsers()
-            return res.status(200).json(usersData);
+            const usersData: IUserResponse = await userSevice.getUsers()
+            return res.status(usersData.statusCode).json(usersData.data);
         } catch (error) {
             console.log(error);
             return res.json(500).json({
@@ -68,7 +68,7 @@ class UserController {
                 })
             }
 
-            const response: IRegisterResponse = await userSevice.register(newUserData);
+            const response: IUserResponse = await userSevice.register(newUserData);
 
             return res.status(response.statusCode).json({
                 "message": response.message,

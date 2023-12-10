@@ -10,10 +10,11 @@ interface IUser extends Document {
     updatedAt: Date,
 }
 
-interface IRegisterResponse {
-    message: string,
+interface IUserResponse {
+    data?: IUser[],
+    message?: string,
     statusCode: number,
-    error?: unknown
+    error?: unknown // | string
 }
 
 const userSchema = new Schema<IUser>({
@@ -28,4 +29,4 @@ const userSchema = new Schema<IUser>({
 
 const UserModel = mongoose.model<IUser>('userModel', userSchema, 'user');
 
-export { UserModel, IUser, IRegisterResponse }
+export { UserModel, IUser, IUserResponse }
