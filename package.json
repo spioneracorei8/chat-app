@@ -5,10 +5,10 @@
   },
   "name": "chatapp",
   "version": "1.0.0",
-  "main": "node server.ts",
+  "main": "node ./src/server.ts",
   "type": "module",
   "scripts": {
-    "dev": "ts-node --esm src/server.ts",
+    "start": "nodemon ./src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
