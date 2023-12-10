@@ -1,12 +1,14 @@
 import express, { Router } from "express"
+import ChatMessageController from "../controllers/chatMessage.controller.ts";
 
-class ChatMessage {
+class ChatMessageRoutes {
     public router: Router;
     private controller: ChatMessageController = new ChatMessageController();
 
 
     constructor() {
         this.router = express.Router();
+        // this.chatMessageRoutes();
     }
 
     chatMessageRoutes() {
@@ -24,4 +26,4 @@ class ChatMessage {
 }
 
 
-export default ChatMessage;
+export default ChatMessageRoutes;
