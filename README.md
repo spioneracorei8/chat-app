@@ -24,6 +24,9 @@ npm install dotenv
 ```
 npm install mongoose @types/mongoose
 ```
+```
+npm install bcrypt @types/bcrypt
+```
 
 ### Problem
 - Problem: can not import mongoose, { Connection } from "mongoose"
