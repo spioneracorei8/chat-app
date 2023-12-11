@@ -16,7 +16,7 @@ class ChatMessageRoutes {
         this.router.post("/conversation/:userId", this.controller.sendMessageToAdmin)
         this.router.post("/conversation/admin/:userId", this.controller.sendMessageToUser)
         this.router.put("/conversation/:chatInboxId", this.controller.editMessage)
-        this.router.delete("/conversation/:chatInboxId", this.controller.deleteMessage)
+        this.router.delete("/conversation/:messageId", this.controller.deleteMessage)
         this.router.delete("/chat-inbox/:userId", this.controller.deleteUserChatInbox)
         
     }

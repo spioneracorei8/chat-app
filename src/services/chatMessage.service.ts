@@ -15,7 +15,7 @@ class ChatMessageService {
                     "statusCode": 404
                 }
             }
-            
+
             return {
                 data: userChatInboxData,
                 statusCode: 200,
@@ -35,20 +35,15 @@ class ChatMessageService {
     async sendMessageToAdmin(newMessageData: IChatMessage, userId: mongoose.Types.ObjectId): Promise<IChatMessageResponse> {
         try {
             const userData: IUser = await UserModel.findById({ _id: userId }) as IUser
-            if (userData === null) {
-                return {
-                    "message": "UserId is invalid",
-                    statusCode: 404
-                }
-            }
-            
+            if (userData === null) return { "message": "UserId does not exists", statusCode: 404 }
+
             newMessageData.userId = userId
             newMessageData.role = "user"
             newMessageData.name = userData.name
             newMessageData.createdAt = new Date();
             newMessageData.updateAt = new Date();
 
-            // await ChatMessageModel.create(newMessageData)
+            await ChatMessageModel.create(newMessageData)
 
             return {
                 "message": "User sent message to Admin has been recorded.",
@@ -64,6 +59,40 @@ class ChatMessageService {
                 "error": error,
             }
         }
+    }
+
+    async sendMessageToUser(newMessageData: IChatMessage, userId: mongoose.Types.ObjectId): Promise<IChatMessageResponse> {
+        try {
+            const userData: IUser = await UserModel.findById({ _id: userId }) as IUser
+            if (userData === null) return { "message": "UserId does not exists", statusCode: 404 }
+
+            newMessageData.name = "Admin"
+            newMessageData.userId = userId
+            newMessageData.role = "admin"
+            newMessageData.createdAt = new Date()
+            newMessageData.updateAt = new Date()
+
+            await ChatMessageModel.create(newMessageData)
+
+            return {
+                "statusCode": 200,
+                "message": "Admin sent message to User has been recorded."
+
+            }
+        } catch (error) {
+            console.log(error);
+            return {
+                "statusCode": 500,
+                "message": "An error occurred while sending message to user.",
+                "error": error
+            }
+
+        }
+    }
+
+
+    async deleteMessage() {
+        
     }
 
 }
