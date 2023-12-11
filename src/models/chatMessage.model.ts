@@ -1,7 +1,7 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
 interface IChatMessage extends Document {
-    userId: string,
+    userId: any,
     name: string,
     role: string,
     message: string,
@@ -9,8 +9,15 @@ interface IChatMessage extends Document {
     updateAt: Date,
 }
 
+interface IChatMessageResponse {
+    data?: IChatMessage[],
+    message?: string,
+    statusCode: number,
+    error?: unknown // | string
+}
+
 const chatMessageSchema = new Schema<IChatMessage>({
-    userId: { type: String, default: String, required: true },
+    userId: { type: mongoose.Types.ObjectId, default: mongoose.Types.ObjectId, required: true },
     name: { type: String, default: String },
     role: { type: String, default: String, required: true },
     message: { type: String, default: String, required: true },
@@ -18,4 +25,5 @@ const chatMessageSchema = new Schema<IChatMessage>({
     updateAt: { type: Date, default: new Date() },
 })
 
-export default mongoose.model<IChatMessage>('chat-inbox', chatMessageSchema);
+const ChatMessageModel = mongoose.model<IChatMessage>('chat-inbox', chatMessageSchema);
+export { ChatMessageModel, IChatMessage, IChatMessageResponse }

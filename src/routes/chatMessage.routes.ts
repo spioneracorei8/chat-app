@@ -8,7 +8,7 @@ class ChatMessageRoutes {
 
     constructor() {
         this.router = express.Router();
-        // this.chatMessageRoutes();
+        this.chatMessageRoutes();
     }
 
     chatMessageRoutes() {

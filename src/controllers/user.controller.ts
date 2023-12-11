@@ -3,8 +3,7 @@ import { Request, Response } from "express";
 import { IUser, IUserResponse } from "../models/user.model";
 class UserController {
 
-    constructor() {
-    }
+    constructor() { }
 
     async getUsers(req: Request, res: Response): Promise<Response> {
         try {
@@ -12,9 +11,9 @@ class UserController {
             return res.status(usersData.statusCode).json(usersData.data);
         } catch (error) {
             console.log(error);
-            return res.json(500).json({
-                "error": error,
-                "error message": "An error occurred while fetching data"
+            return res.status(500).json({
+                "controller error": error,
+                "message": "An error occurred while fetching users data"
             })
         }
     }
@@ -76,9 +75,9 @@ class UserController {
             })
 
         } catch (error) {
-            return res.json(500).json({
+            return res.status(500).json({
                 "controller error": error,
-                "message": "An error occurred while inserting data"
+                "message": "An error occurred while inserting new user data"
             })
         }
     }
