@@ -1,6 +1,6 @@
 import userSevice from "../services/user.service"
 import { Request, Response } from "express";
-import { IUser, IUserResponse } from "../models/user.model";
+import { IUser, IUserResponse } from "../models/usermodel";
 import mongoose from "mongoose";
 class UserController {
 
@@ -11,11 +11,10 @@ class UserController {
             const usersData: IUserResponse = await userSevice.getUsers()
             return res.status(usersData.statusCode).json(usersData.data);
         } catch (error) {
-            console.log(error);
             const errorMessage = (error as Error).message;
             return res.status(500).json({
                 "error": errorMessage,
-                "message": "An error occurred while fetching users data"
+                "message": "An error occurred while fetching users data."
             })
         }
     }
@@ -41,33 +40,24 @@ class UserController {
 
             // Validate length of name and username
             const regexpName = new RegExp(/^[a-zA-Z0-9-_.].{5,9}$/);
-            if (!regexpName.test(newUserData.name)) {
-                return res.status(400).json({
-                    "message": `name required at least 6 characters and not more than 10 characters`
-                })
-            }
-            const regexpUsername = new RegExp(/^[a-zA-Z0-9-_.].{7,11}$/);
-            if (!regexpUsername.test(newUserData.username)) {
-                return res.status(400).json({
-                    "message": `username required at least 8 characters and not more than 12 characters`
-                })
-            }
+            if (!regexpName.test(newUserData.name))
+                return res.status(400).send(`name required at least 6 characters and not more than 10 characters.`)
+
+
+            const regexpUsername = new RegExp(/^[a-zA-Z0-9-_.].{7,}$/);
+            if (!regexpUsername.test(newUserData.username)) return res.status(400).send(`username required at least 8 characters.`)
+
 
             // Validate email
             const regexpValidateEmail = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
-            if (!regexpValidateEmail.test(newUserData.email)) {
-                return res.status(400).json({
-                    "message": `Invalid email address type.`,
-                })
-            }
+            if (!regexpValidateEmail.test(newUserData.email))
+                return res.status(400).send(`Invalid email address type.`)
+
 
             // Validate password must have 10 characters and contain numbers and letters
             const regexpValidatePassword = new RegExp(/^(?=.*\d)(?=.*[a-z]).{9,}$/)
-            if (!regexpValidatePassword.test(newUserData.password)) {
-                return res.status(400).json({
-                    "message": `password required at least 10 characters`
-                })
-            }
+            if (!regexpValidatePassword.test(newUserData.password))
+                return res.status(400).send(`password required at least 10 characters contain numbers and letters.`)
 
             const response: IUserResponse = await userSevice.register(newUserData);
 

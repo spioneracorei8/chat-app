@@ -1,28 +1,27 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import chatMessageService from "../services/chatMessage.service";
 import { Request, Response } from "express";
-import { IChatMessage, IChatMessageResponse } from "../models/chatMessage.model";
-
+import { IChatMessage, IChatMessageResponse } from "../models/chatMessagemodel";
 
 class ChatMessageController {
 
     constructor() { }
 
     async getChatInboxByUserId(req: Request, res: Response): Promise<Response> {
-        const userId: string = req.params.userId
-        if (userId.length !== 24) return res.status(400).json({ "message": "userId must have 24 characters and not more 24 characters" })
-
-        const userObjId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(userId);
-
         try {
-            const userChatInboxData: IChatMessageResponse = await chatMessageService.getChatInboxByUserId(userObjId);
-            return res.status(userChatInboxData.statusCode).json({
-                "data": userChatInboxData.data,
-                "message": userChatInboxData.message
+            const userId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(req.params.userId);
+
+            const response: IChatMessageResponse = await chatMessageService.getChatInboxByUserId(userId);
+
+            return res.status(response.statusCode).json({
+                "data": response.data,
+                "message": response.message,
+                "error": response.error
             })
         } catch (error) {
+            const errorMessage = (error as Error).message;
             return res.status(500).json({
-                "error": error,
+                "error": errorMessage,
                 "error message": "An error occurred while fetching user chat inbox."
             })
         }
@@ -31,39 +30,32 @@ class ChatMessageController {
     async sendMessageToAdmin(req: Request, res: Response): Promise<Response> {
         try {
             const newMessageData: IChatMessage = req.body;
-            if (newMessageData.message.length <= 0) return res.status(400).json({ "message": "Message can not blank." })
+            if (newMessageData.message.length <= 0) return res.status(400).send("Message can not blank.")
 
-            const userId: string = req.params.userId
-            if (userId.length !== 24) return res.status(400).json({ "message": "userId must have 24 characters and not more 24 characters" })
+            const userId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(req.params.userId);
 
-            const userObjId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(userId);
-
-            const response: IChatMessageResponse = await chatMessageService.sendMessageToAdmin(newMessageData, userObjId)
-
+            const response: IChatMessageResponse = await chatMessageService.sendMessageToAdmin(newMessageData, userId)
 
             return res.status(response.statusCode).json({
                 "message": response.message,
                 "error": response.error
-
             })
         } catch (error) {
+            const errorMessage = (error as Error).message;
             return res.status(500).json({
-                "controller error": error,
+                "error": errorMessage,
                 "error message": "An error occurred while sending message to admin."
             })
         }
     }
-    async sendMessageToUser(req: Request, res: Response) {
+    async sendMessageToUser(req: Request, res: Response): Promise<Response> {
         try {
             const newMessageData: IChatMessage = req.body
-            if (newMessageData.message.length <= 0) return res.status(400).json({ "message": "Message can not blank." })
+            if (newMessageData.message.length <= 0) return res.status(400).send("Message can not blank.")
 
-            const userId: string = req.params.userId
-            if (userId.length !== 24) return res.status(400).json({ "message": "userId must have 24 characters and not more 24 characters" })
+            const userId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(req.params.userId);
 
-            const userObjId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(userId);
-
-            const response: IChatMessageResponse = await chatMessageService.sendMessageToUser(newMessageData, userObjId)
+            const response: IChatMessageResponse = await chatMessageService.sendMessageToUser(newMessageData, userId)
 
             return res.status(response.statusCode).json({
                 "message": response.message,
@@ -71,26 +63,43 @@ class ChatMessageController {
             })
 
         } catch (error) {
+            const errorMessage = (error as Error).message;
             return res.status(500).json({
                 "error message": "An error occurred while sending message to user.",
-                "controller error": error
+                "error": errorMessage
             })
         }
     }
 
-    async editMessage() {
+    async editMessage(req: Request, res: Response): Promise<Response> {
+        try {
+            const editMessageData: IChatMessage = req.body;
+            if (editMessageData.message.length <= 0) return res.status(400).send(`Message can not blank.`)
 
+            const messageId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(req.params.messageId);
+
+            const response: IChatMessageResponse = await chatMessageService.editMessage(messageId, editMessageData);
+
+            return res.status(response.statusCode).json({
+                "message": response.message,
+                "error": response.error
+            })
+        } catch (error) {
+            const errorMessage = (error as Error).message;
+            return res.status(500).json({
+                "error message": `An error occurred while editing message.`,
+                "error": errorMessage
+            })
+        }
     }
 
     async deleteMessage(req: Request, res: Response): Promise<Response> {
         try {
-            const role = req.query.role as string
-            const messageId: string = req.params.messageId
-            if (messageId.length !== 24) return res.status(400).send("UserId must have 24 characters and not more 24 characters")
+            const role: string = req.query.role as string
 
-            const messageObjId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(messageId);
+            const messageId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(req.params.messageId);
 
-            const response: IChatMessageResponse = await chatMessageService.deleteMessage(messageObjId,role)
+            const response: IChatMessageResponse = await chatMessageService.deleteMessage(messageId, role)
 
             return res.status(response.statusCode).json({
                 "message": response.message,
@@ -99,7 +108,7 @@ class ChatMessageController {
         } catch (error) {
             return res.status(500).json({
                 "error message": "An error occurred while deleting message.",
-                "controller error": error
+                "error": error
             })
         }
     }
@@ -109,13 +118,9 @@ class ChatMessageController {
             const role = req.query.role as string
             if (role != "admin") return res.status(401).send("Something went wrong deleting chat inbox.")
 
-            const userId: string = req.params.userId
-            if (userId.length != 24) return res.status(400).send(`UserId must have 24 characters and not more 24 characters.`)
+            const userId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(req.params.userId);
 
-
-            const userObjId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(userId);
-
-            const response: IChatMessageResponse = await chatMessageService.deleteUserChatInbox(userObjId)
+            const response: IChatMessageResponse = await chatMessageService.deleteUserChatInbox(userId)
 
             return res.status(response.statusCode).json({
                 "message": response.message,
@@ -124,9 +129,10 @@ class ChatMessageController {
 
 
         } catch (error) {
+            const errorMessage = (error as Error).message;
             return res.status(500).json({
                 "error message": "An error occured while deleting user chat inbox.",
-                "controller error": error
+                "controller error": errorMessage
             })
         }
     }

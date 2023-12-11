@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IUser, UserModel, IUserResponse } from "../models/user.model"
+import { IUser, UserModel, IUserResponse } from "../models/usermodel"
 import bcrypt from "bcrypt"
 
 class UserService {
@@ -14,13 +14,11 @@ class UserService {
                 statusCode: 200,
             }
         } catch (error) {
-            console.log(error);
-            // const errorMessage = (error as Error).message;
-            // return res.status(500).json({ "error message": errorMessage });
+            const errorMessage = (error as Error).message;
             return {
-                "message": "An error occurred while fetching users data",
+                "message": "An error occurred while fetching users data.",
                 "statusCode": 500,
-                "error": error,
+                "error": errorMessage,
             }
         }
     }
@@ -36,14 +34,13 @@ class UserService {
             return {
                 "message": `Created new user successfully.`,
                 "statusCode": 200,
-
             }
         } catch (error) {
-            console.log(error);
+            const errorMessage = (error as Error).message;
             return {
                 "message": "An error occurred while inserting new user data.",
                 "statusCode": 500,
-                "error": error,
+                "error": errorMessage,
             }
         }
     }
@@ -60,11 +57,11 @@ class UserService {
                 "message": `Deleted user in _id ${userId} successfully.`
             }
         } catch (error) {
-            console.log(error);
+            const errorMessage = (error as Error).message;
             return {
                 "statusCode": 500,
                 "message": "An error occurred while deleting user.",
-                "error": error
+                "error": errorMessage
             }
         }
     }
