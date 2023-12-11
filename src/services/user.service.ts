@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { IUser, UserModel, IUserResponse } from "../models/user.model"
 import bcrypt from "bcrypt"
 
@@ -40,9 +41,30 @@ class UserService {
         } catch (error) {
             console.log(error);
             return {
-                "message": "An error occurred while inserting new user data",
+                "message": "An error occurred while inserting new user data.",
                 "statusCode": 500,
                 "error": error,
+            }
+        }
+    }
+
+    async deleteUser(userId: mongoose.Types.ObjectId): Promise<IUserResponse> {
+        try {
+            const userData = await UserModel.findById({ _id: userId })
+            if (userData === null) return { "statusCode": 404, "message": "userId does not exists" }
+
+            await UserModel.findByIdAndDelete({ _id: userId })
+
+            return {
+                "statusCode": 200,
+                "message": `Deleted user in _id ${userId} successfully.`
+            }
+        } catch (error) {
+            console.log(error);
+            return {
+                "statusCode": 500,
+                "message": "An error occurred while deleting user.",
+                "error": error
             }
         }
     }

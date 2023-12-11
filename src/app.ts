@@ -20,9 +20,12 @@ class App {
     }
 
     public configRoutes() {
-        this.app.get("/", (req: Request, res: Response) => {
-            return res.send("Hello world!")
+        this.app.get("/", (req: Request, res: Response): Response => {
+            return res.status(200).send("Hello world!")
         })
+        this.app.get("*"), (req: Request, res: Response): Response => {
+            return res.status(404).send("Not found!")
+        }
 
         this.app.use(express.json())
         this.app.use(express.urlencoded({ extended: true }))
@@ -37,7 +40,6 @@ class App {
         })
 
     }
-
 
     public async start() {
         await this.app.listen(this.port, () => {

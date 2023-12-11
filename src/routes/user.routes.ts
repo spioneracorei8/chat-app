@@ -12,6 +12,7 @@ class UserRoutes {
     userRoutes() {
         this.router.get("/users", this.controller.getUsers)
         this.router.post("/auth/register", this.controller.register)
+        this.router.delete("/user/:userId", this.controller.deleteUser)
     }
 }
 

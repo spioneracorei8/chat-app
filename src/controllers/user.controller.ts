@@ -1,6 +1,7 @@
 import userSevice from "../services/user.service"
 import { Request, Response } from "express";
 import { IUser, IUserResponse } from "../models/user.model";
+import mongoose from "mongoose";
 class UserController {
 
     constructor() { }
@@ -11,8 +12,9 @@ class UserController {
             return res.status(usersData.statusCode).json(usersData.data);
         } catch (error) {
             console.log(error);
+            const errorMessage = (error as Error).message;
             return res.status(500).json({
-                "controller error": error,
+                "error": errorMessage,
                 "message": "An error occurred while fetching users data"
             })
         }
@@ -75,10 +77,31 @@ class UserController {
             })
 
         } catch (error) {
+            const errorMessage = (error as Error).message;
             return res.status(500).json({
-                "controller error": error,
-                "message": "An error occurred while inserting new user data"
+                "error": errorMessage,
+                "message": "An error occurred while inserting new user data."
             })
+        }
+    }
+
+    async deleteUser(req: Request, res: Response): Promise<Response> {
+        try {
+            const userId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(req.params.userId)
+
+            const response = await userSevice.deleteUser(userId)
+
+            return res.status(response.statusCode).json({
+                "message": response.message,
+                "error": response.error
+            })
+
+        } catch (error) {
+            const errorMessage = (error as Error).message;
+            return res.status(500).json({
+                "error": errorMessage,
+                "message": "An error occurred while deleting user."
+            });
         }
     }
 }
