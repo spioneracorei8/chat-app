@@ -1,7 +1,7 @@
 import App from "./app.ts";
 import 'dotenv/config'
 
-const dbUri: string = process.env.DB_URI || "null";
+const dbUri = process.env.DB_URI as string
 
 const app = new App(
     8080,
