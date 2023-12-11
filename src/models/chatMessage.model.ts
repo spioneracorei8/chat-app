@@ -25,5 +25,5 @@ const chatMessageSchema = new Schema<IChatMessage>({
     updateAt: { type: Date, default: new Date() },
 })
 
-const ChatMessageModel = mongoose.model<IChatMessage>('chat-inbox', chatMessageSchema);
+const ChatMessageModel = mongoose.model<IChatMessage>('chatInboxModel', chatMessageSchema, 'chat-inbox');
 export { ChatMessageModel, IChatMessage, IChatMessageResponse }

@@ -84,15 +84,18 @@ class ChatMessageController {
 
     async deleteMessage(req: Request, res: Response): Promise<Response> {
         try {
+            const role = req.query.role as string
             const messageId: string = req.params.messageId
-            if (messageId.length !== 24) return res.status(400).json({ "message": "UserId must have 24 characters and not more 24 characters" });
+            if (messageId.length !== 24) return res.status(400).send("UserId must have 24 characters and not more 24 characters")
 
             const messageObjId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(messageId);
 
-            
+            const response: IChatMessageResponse = await chatMessageService.deleteMessage(messageObjId,role)
 
-
-            return res
+            return res.status(response.statusCode).json({
+                "message": response.message,
+                "error": response.error
+            })
         } catch (error) {
             return res.status(500).json({
                 "error message": "An error occurred while deleting message.",
@@ -101,8 +104,31 @@ class ChatMessageController {
         }
     }
 
-    async deleteUserChatInbox() {
+    async deleteUserChatInbox(req: Request, res: Response): Promise<Response> {
+        try {
+            const role = req.query.role as string
+            if (role != "admin") return res.status(401).send("Something went wrong deleting chat inbox.")
 
+            const userId: string = req.params.userId
+            if (userId.length != 24) return res.status(400).send(`UserId must have 24 characters and not more 24 characters.`)
+
+
+            const userObjId: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(userId);
+
+            const response: IChatMessageResponse = await chatMessageService.deleteUserChatInbox(userObjId)
+
+            return res.status(response.statusCode).json({
+                "message": response.message,
+                "error": response.error
+            })
+
+
+        } catch (error) {
+            return res.status(500).json({
+                "error message": "An error occured while deleting user chat inbox.",
+                "controller error": error
+            })
+        }
     }
 }
 

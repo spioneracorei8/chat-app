@@ -11,7 +11,7 @@ class ChatMessageService {
             const userChatInboxData: IChatMessage[] = await ChatMessageModel.find({ userId: userId })
             if (userChatInboxData.length === 0) {
                 return {
-                    "message": "UserId does not exists or you never send message to admin.",
+                    "message": "UserId does not exists or this user never send message to admin.",
                     "statusCode": 404
                 }
             }
@@ -91,8 +91,49 @@ class ChatMessageService {
     }
 
 
-    async deleteMessage() {
-        
+    async deleteMessage(messageObjId: mongoose.Types.ObjectId, role: string): Promise<IChatMessageResponse> {
+        try {
+            const messageData = await ChatMessageModel.findById({_id: messageObjId}) as IChatMessage
+            if (messageData.role != role) return {"statusCode": 401, "message": "Something went wrong deleting chat inbox."}
+            
+            const deletedData = await ChatMessageModel.findByIdAndDelete({ _id: messageObjId })
+            if (deletedData === null) return { "statusCode": 404, "message": `MessageId does not exists.` }
+
+            return {
+                "statusCode": 200,
+                "message": `Message id ${messageObjId} has been deleted successfully.`
+            }
+        } catch (error) {
+            console.log(error);
+            return {
+                "statusCode": 500,
+                "message": "An error occurred while deleting message.",
+                "error": error
+            }
+
+        }
+    }
+
+    async deleteUserChatInbox(userObjId: mongoose.Types.ObjectId): Promise<IChatMessageResponse> {
+        try {
+            const chatInboxData = await ChatMessageModel.find({ userId: userObjId });
+            if (chatInboxData.length === 0) return { "statusCode": 404, "message": `UserId does not exists or this user never send any message.` }
+
+            await ChatMessageModel.deleteMany({ userId: userObjId })
+
+            return {
+                "statusCode": 200,
+                "message": `Deleted chat inbox in userId ${userObjId} successfully.`
+            }
+        } catch (error) {
+            console.log(error);
+            return {
+                "statusCode": 500,
+                "message": "An error occurred while deleting user chat inbox",
+                "error": error
+            }
+
+        }
     }
 
 }
