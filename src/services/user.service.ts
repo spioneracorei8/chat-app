@@ -17,7 +17,7 @@ class UserService {
             // const errorMessage = (error as Error).message;
             // return res.status(500).json({ "error message": errorMessage });
             return {
-                "message": "An error occurred while inserting data",
+                "message": "An error occurred while fetching users data",
                 "statusCode": 500,
                 "error": error,
             }
@@ -40,7 +40,7 @@ class UserService {
         } catch (error) {
             console.log(error);
             return {
-                "message": "An error occurred while inserting data",
+                "message": "An error occurred while inserting new user data",
                 "statusCode": 500,
                 "error": error,
             }
